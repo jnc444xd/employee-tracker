@@ -106,3 +106,6 @@ const updateEmployee = () => {
         console.log(results);
     });
 };
+
+
+module.exports = { viewDepts, viewRoles, viewEmployees, addDept, addRole, addEmployee, updateEmployee };

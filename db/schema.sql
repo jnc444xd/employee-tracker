@@ -26,5 +26,7 @@ CREATE TABLE employees (
     FOREIGN KEY (role_id)
     REFERENCES roles(id)
     ON DELETE SET NULL,
-    -- Need manager id to reference id inside same table.
+    FOREIGN KEY (manager_id)
+    REFERENCES employees(id)
+    ON DELETE SET NULL
 )
