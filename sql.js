@@ -77,22 +77,15 @@ const addRole = () => {
 };
 
 const addEmployee = (first, last, role, manager) => {
-    
-    const roleID = db.query(`SELECT id FROM roles WHERE title = ${role}`);
-    const managerID = db.query(`SELECT id FROM employees WHERE CONCAT(first_name, " ", last_name) = ${manager}`);
+
+    const params = [first, last, role, manager];
 
     const sql = `
     INSERT INTO employees (first_name, last_name, role_id, manager_id)
-    VALUES (${first}, ${last}, ${roleID}, ${managerID})
-    `
+    VALUES (?, ?, ?, ?)
+    `;
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        console.log(results);
-    });
+    db.query(sql, params);
 };
 
 const updateEmployee = () => {

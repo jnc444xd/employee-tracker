@@ -10,7 +10,7 @@ const db = mysql.createConnection(
         database: 'company_db'
     },
     console.log(`Connected to the company_db.`)
-);
+).promise();
 
 const starterPrompt = () => {
     return inquirer
@@ -42,15 +42,22 @@ const starterPrompt = () => {
         });
 };
 
-const addEmployeePrompt = () => {
+const addEmployeePrompt = async () => {
 
-    const getRoles = () => {
-       db.query(`SELECT title AS name FROM roles`)
+    const getRoles = async () => {
+        const roles = await db.query(`SELECT id, title FROM roles`);
+        const map = roles[0].map(({ id, title }) => ({ name: title, value: id }));
+        return map;
     };
 
-    const getManagers = () => {
-        db.query(`SELECT CONCAT(first_name, " ", last_name) AS name FROM employees`)
-     };
+    const getManagers = async () => {
+        const managers = await db.query(`SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees`);
+        const map = managers[0].map(({ id, name }) => ({ name: name, value: id }))
+        return map;
+    };
+
+    let firstName = "";
+    let lastName = "";
 
     return inquirer
         .prompt([
@@ -68,17 +75,22 @@ const addEmployeePrompt = () => {
                 type: 'list',
                 name: 'role',
                 message: "What is the employee's role?",
-                choices: getRoles()
+                choices: await getRoles()
             },
             {
                 type: 'list',
                 name: 'manager',
                 message: "Who is the employee's manager?",
-                choices: getManagers()
+                choices: await getManagers()
             }
         ])
-        .then(({ firstName, lastName, role, manager }) => {
-            addEmployee(firstName, lastName, role, manager)
+        .then((answers) => {
+            firstName = answers.firstName;
+            lastName = answers.lastName;
+            addEmployee(answers.firstName, answers.lastName, answers.role, answers.manager);
+        })
+        .then(() => {
+            console.log(`Successfully added ${firstName} ${lastName} to the database.`)
         })
         .then(() => starterPrompt())
 };
