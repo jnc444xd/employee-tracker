@@ -76,10 +76,14 @@ const addRole = () => {
     });
 };
 
-const addEmployee = () => {
+const addEmployee = (first, last, role, manager) => {
+    
+    const roleID = db.query(`SELECT id FROM roles WHERE title = ${role}`);
+    const managerID = db.query(`SELECT id FROM employees WHERE CONCAT(first_name, " ", last_name) = ${manager}`);
+
     const sql = `
-    INSERT INTO 
-    VALUES
+    INSERT INTO employees (first_name, last_name, role_id, manager_id)
+    VALUES (${first}, ${last}, ${roleID}, ${managerID})
     `
 
     db.query(sql, (err, results) => {
