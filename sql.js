@@ -9,9 +9,11 @@ const db = mysql.createConnection(
     },
 );
 
+// Error messages needed?
+
 const viewDepts = () => {
     const sql = `SELECT * FROM departments`
-    // How to choose correct error message?
+
     db.query(sql, (err, results) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -22,7 +24,11 @@ const viewDepts = () => {
 };
 
 const viewRoles = () => {
-    const sql = `SELECT * FROM roles`
+    const sql = `
+    SELECT r.id, r.title, d.name AS department_name, r.salary
+    FROM roles r
+    LEFT JOIN departments d ON r.department_id = d.id
+    `
     
     db.query(sql, (err, results) => {
         if (err) {
@@ -34,21 +40,11 @@ const viewRoles = () => {
 };
 
 const viewEmployees = () => {
-    const sql = `SELECT * FROM employees`
-
-    db.query(sql, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        console.log(results);
-    });
-};
-
-const addDept = () => {
     const sql = `
-    INSERT INTO 
-    VALUES
+    SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary 
+    FROM employees e
+    JOIN roles r ON e.role_id = r.id
+    JOIN departments d ON r.department_id = d.id
     `
 
     db.query(sql, (err, results) => {
@@ -60,19 +56,28 @@ const addDept = () => {
     });
 };
 
-const addRole = () => {
+const addDept = (dept) => {
+
+    params = [dept]
+
     const sql = `
-    INSERT INTO 
-    VALUES
+    INSERT INTO departments (name)
+    VALUES (?)
     `
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        console.log(results);
-    });
+    db.query(sql, params);
+};
+
+const addRole = (role, salary, department) => {
+
+    params = [role, department, salary];
+
+    const sql = `
+    INSERT INTO roles (title, department_id, salary)
+    VALUES (?, ?, ?)
+    `;
+
+    db.query(sql, params);
 };
 
 const addEmployee = (first, last, role, manager) => {

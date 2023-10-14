@@ -38,18 +38,23 @@ const starterPrompt = () => {
                     setTimeout(() => starterPrompt(), 200);
                     break;
                 case 'Add Role':
-                    // addRole();
+                    addRolePrompt();
                     break;
                 case 'View All Departments':
                     viewDepts();
                     setTimeout(() => starterPrompt(), 200);
                     break;
                 case 'Add Department':
-                    // addDept();
+                    addDeptPrompt();
                     break;
             }
         });
 };
+
+// Need to add checks for errors and validation for inputs
+// Do I need return before inquirer prompts? Why?
+
+// Employee Prompts below
 
 const addEmployeePrompt = async () => {
 
@@ -99,7 +104,7 @@ const addEmployeePrompt = async () => {
             addEmployee(answers.firstName, answers.lastName, answers.role, answers.manager);
         })
         .then(() => {
-            console.log(`Successfully added ${firstName} ${lastName} to the database.`)
+            console.log(`Successfully added ${firstName} ${lastName} to the company database.`)
         })
         .then(() => starterPrompt())
 };
@@ -117,8 +122,6 @@ const updateRolePrompt = async () => {
         const map = roles[0].map(({ id, title }) => ({ name: title, value: id }));
         return map;
     };
-
-    let employee = "";
 
     return inquirer
         .prompt([
@@ -140,7 +143,66 @@ const updateRolePrompt = async () => {
             updateEmployee(answers.employee, answers.role);
         })
         .then(() => {
-            console.log(`Successfully updated ${employee}'s role.`)
+            console.log(`Successfully updated employee's role in company database.`)
+        })
+        .then(() => starterPrompt())
+};
+
+// Role prompt below
+
+const addRolePrompt = async () => {
+
+    const getDepts = async () => {
+        const depts = await db.query(`SELECT id, name FROM departments`);
+        const map = depts[0].map(({ id, name }) => ({ name: name, value: id }));
+        return map;
+    };
+
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'role',
+                message: "What is the name of the role?"
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: "What is the salary of the role?"
+            },
+            {
+                type: 'list',
+                name: 'department',
+                message: "Which department does this role belong to?",
+                choices: await getDepts()
+            }
+        ])
+        .then((answers) => {
+            addRole(answers.role, answers.salary, answers.department);
+        })
+        .then(() => {
+            console.log(`Successfully added the role to the company database.`)
+        })
+        .then(() => starterPrompt())
+};
+
+// Department prompt below
+
+const addDeptPrompt = () => {
+
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'dept',
+                message: "What is the name of the department?"
+            }
+        ])
+        .then((answers) => {
+            addDept(answers.dept);
+        })
+        .then(() => {
+            console.log(`Successfully added the department to the company database.`)
         })
         .then(() => starterPrompt())
 };
