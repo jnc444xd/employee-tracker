@@ -7,7 +7,6 @@ const db = mysql.createConnection(
         password: 'password213',
         database: 'company_db'
     },
-    console.log(`Connected to the company_db.`)
 );
 
 const viewDepts = () => {
@@ -88,20 +87,17 @@ const addEmployee = (first, last, role, manager) => {
     db.query(sql, params);
 };
 
-const updateEmployee = () => {
+const updateEmployee = (employee, role) => {
+
+    const params = [role, employee]
+
     const sql = `
-    UPDATE
-    SET
-    WHERE
+    UPDATE employees
+    SET role_id = ?
+    WHERE id = ?
     `
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        console.log(results);
-    });
+    db.query(sql, params);
 };
 
 

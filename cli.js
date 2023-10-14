@@ -9,7 +9,6 @@ const db = mysql.createConnection(
         password: 'password213',
         database: 'company_db'
     },
-    console.log(`Connected to the company_db.`)
 ).promise();
 
 const starterPrompt = () => {
@@ -24,20 +23,30 @@ const starterPrompt = () => {
         ])
         .then(({ landing }) => {
             switch (landing) {
-                case 'View All Employees': viewEmployees();
-                break;
-                case 'Add Employee': addEmployeePrompt();
-                break;
-                // case 'Update Employee Role': updateEmployee();
-                break;
-                case 'View All Roles': viewRoles();
-                break;
-                // case 'Add Role': addRole();
-                break;
-                case 'View All Departments': viewDepts();
-                break;
-                // case 'Add Department': addDept();
-                break;
+                case 'View All Employees':
+                    viewEmployees();
+                    setTimeout(() => starterPrompt(), 200);
+                    break;
+                case 'Add Employee':
+                    addEmployeePrompt();
+                    break;
+                case 'Update Employee Role':
+                    updateRolePrompt();
+                    break;
+                case 'View All Roles':
+                    viewRoles();
+                    setTimeout(() => starterPrompt(), 200);
+                    break;
+                case 'Add Role':
+                    // addRole();
+                    break;
+                case 'View All Departments':
+                    viewDepts();
+                    setTimeout(() => starterPrompt(), 200);
+                    break;
+                case 'Add Department':
+                    // addDept();
+                    break;
             }
         });
 };
@@ -91,6 +100,47 @@ const addEmployeePrompt = async () => {
         })
         .then(() => {
             console.log(`Successfully added ${firstName} ${lastName} to the database.`)
+        })
+        .then(() => starterPrompt())
+};
+
+const updateRolePrompt = async () => {
+
+    const getEmployees = async () => {
+        const managers = await db.query(`SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees`);
+        const map = managers[0].map(({ id, name }) => ({ name: name, value: id }))
+        return map;
+    };
+
+    const getRoles = async () => {
+        const roles = await db.query(`SELECT id, title FROM roles`);
+        const map = roles[0].map(({ id, title }) => ({ name: title, value: id }));
+        return map;
+    };
+
+    let employee = "";
+
+    return inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: "Which employee would you like to update?",
+                choices: await getEmployees()
+            },
+            {
+                type: 'list',
+                name: 'role',
+                message: "Which role would you like to assign?",
+                choices: await getRoles()
+            }
+        ])
+        .then((answers) => {
+            employee = answers.employee.name;
+            updateEmployee(answers.employee, answers.role);
+        })
+        .then(() => {
+            console.log(`Successfully updated ${employee}'s role.`)
         })
         .then(() => starterPrompt())
 };
