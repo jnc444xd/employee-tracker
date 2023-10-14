@@ -1,4 +1,4 @@
-const { starterPrompt } = require('./cli');
+const { starterPrompt } = require('./lib/cli');
 
 const init = () => starterPrompt();
 
