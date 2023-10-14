@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 const db = mysql.createConnection(
     {
@@ -12,6 +13,7 @@ const db = mysql.createConnection(
 // Error messages needed?
 
 const viewDepts = () => {
+
     const sql = `SELECT * FROM departments`
 
     db.query(sql, (err, results) => {
@@ -19,11 +21,12 @@ const viewDepts = () => {
             res.status(500).json({ error: err.message });
             return;
         }
-        console.log(results);
+        console.table(results);
     });
 };
 
 const viewRoles = () => {
+
     const sql = `
     SELECT r.id, r.title, d.name AS department_name, r.salary
     FROM roles r
@@ -35,17 +38,19 @@ const viewRoles = () => {
             res.status(500).json({ error: err.message });
             return;
         }
-        console.log(results);
+        console.table(results);
     });
 };
 
 const viewEmployees = () => {
+
     const sql = `
     SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department_name, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name
     FROM employees e
     JOIN roles r ON e.role_id = r.id
     JOIN departments d ON r.department_id = d.id
-    JOIN employees m ON e.manager_id = m.id;
+    JOIN employees m ON e.manager_id = m.id
+    ORDER BY e.id;
     `
 
     db.query(sql, (err, results) => {
@@ -53,7 +58,7 @@ const viewEmployees = () => {
             res.status(500).json({ error: err.message });
             return;
         }
-        console.log(results);
+        console.table(results);
     });
 };
 
