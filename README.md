@@ -10,6 +10,6 @@ Navigate to my [GitHub page](https://github.com/jnc444xd/employee-tracker) to cl
 
 ## Usage
 
-Here is a [video](https://) demonstrating how to use this application.
+Here is a [video](https://watch.screencastify.com/v/aT0fS6MtiUCDUXiFnSE9) demonstrating how to use this application.
 
-Initialize the application inside terminal by entering this command: "npm start". Once initialized, user will be presented with a series of prompts to manage/view their seeded database.
+Initialize the application inside terminal by entering this command: "npm start". Once initialized, user will be presented with a series of prompts to view/manage their company's database.
