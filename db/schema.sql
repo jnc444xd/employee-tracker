@@ -15,7 +15,7 @@ CREATE TABLE roles (
     FOREIGN KEY (department_id)
     REFERENCES departments(id)
     ON DELETE SET NULL
-)
+);
 
 CREATE TABLE employees (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -29,4 +29,4 @@ CREATE TABLE employees (
     FOREIGN KEY (manager_id)
     REFERENCES employees(id)
     ON DELETE SET NULL
-)
+);
